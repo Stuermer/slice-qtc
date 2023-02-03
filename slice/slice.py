@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import json
 import logging
+from pathlib import Path
 
 import serial
 from serial import Serial
@@ -18,10 +20,14 @@ def send_command(ser: Serial | None, command: str, expected_result_type=None):
         ser.write(command)
         reply = ser.readline()
         logger.info(f"reply: {reply}")
+        if reply == b'On\r\n':
+            reply = '1'
+        if reply == b'Off\r\n':
+            reply = '0'
         if expected_result_type is not None:
             try:
                 reply = expected_result_type(reply)
-            except TypeError:
+            except ValueError:
                 logger.info(f"Couldn't convert {reply} to {expected_result_type}")
     logger.info(f"{' COMMAND END ' :*^40}\n")
     return reply
@@ -306,6 +312,29 @@ class Slice:
     @InputB.setter
     def InputB(self, value: str):
         self._send_command(f"InputB {value}", str)
+
+    def save_settings_to_file(self, path: str | Path):
+        qtc_settings = {}
+        # setting keys for properties that can be set. The same for all channels.
+        setting_keys = [attr for attr, value in vars(Channel).items()
+                        if isinstance(value, property) and value.fset is not None]
+        for channel in ['ch1', 'ch2', 'ch3', 'ch4']:
+            # read in current setting values for each channel
+            setting_values = [getattr(getattr(self, channel), s) for s in setting_keys]
+            settings_dict = dict(zip(setting_keys, setting_values))
+            qtc_settings.update({channel: settings_dict})
+
+        with open(path, "w") as fp:
+            json.dump(qtc_settings, fp, indent=4, sort_keys=True)
+
+    def load_settings_from_file(self, path: str | Path, autosave: bool = True):
+        with open(path, "r") as json_data:
+            qtc_settings = json.load(json_data)
+            for channel in qtc_settings:
+                for setting_key, setting_value in qtc_settings[channel].items():
+                    setattr(getattr(self, channel), setting_key, setting_value)
+        if autosave:
+            self.save()
 
 
 if __name__ == "__main__":
