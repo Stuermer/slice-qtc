@@ -2,8 +2,11 @@
 name = "slice-qtc"
 version = "0.1.0"
 description = "A package to communicate with a VESCENT Slice-QTC temperature controller."
-authors = ["Julian Stuermer stuermer@lsw.uni-heidelberg.de"]
+authors = ["Julian Stuermer <stuermer@lsw.uni-heidelberg.de>"]
 license = "MIT"
+packages = [
+    { include = "slice" }
+]
 
 [tool.poetry.dependencies]
 python = ">3.8"
