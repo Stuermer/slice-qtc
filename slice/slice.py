@@ -242,13 +242,13 @@ class Channel:
 
 class Slice:
     def __init__(self, port="/dev/vescent", debug=False):
-    """
-    Creates Slice object
+        """
+        Creates Slice object
 
-    Args:
-        port (str): serial port for connection
-        debug (bool): if True, debug mode is on. No commands are send via serial port.
-    """
+        Args:
+            port (str): serial port for connection
+            debug (bool): if True, debug mode is on. No commands are send via serial port.
+        """
         self.debug = debug
         self.port = port
 
