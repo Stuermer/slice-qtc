@@ -249,16 +249,16 @@ class Slice:
         port (str): serial port for connection
         debug (bool): if True, debug mode is on. No commands are send via serial port.
     """
-    self.debug = debug
-    self.port = port
+        self.debug = debug
+        self.port = port
 
-    self.ser = None
-    self._connect()
+        self.ser = None
+        self._connect()
 
-    self.ch1 = Channel(1, self.ser)
-    self.ch2 = Channel(2, self.ser)
-    self.ch3 = Channel(3, self.ser)
-    self.ch4 = Channel(4, self.ser)
+        self.ch1 = Channel(1, self.ser)
+        self.ch2 = Channel(2, self.ser)
+        self.ch3 = Channel(3, self.ser)
+        self.ch4 = Channel(4, self.ser)
 
     def _connect(self):
         if not self.debug:
