@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import logging
 from pathlib import Path
+from typing import Any, Iterable
 
 import serial
 from serial import Serial
@@ -20,10 +21,11 @@ def send_command(ser: Serial | None, command: str, expected_result_type=None):
         ser.write(command)
         reply = ser.readline()
         logger.info(f"reply: {reply}")
-        if reply == b'On\r\n':
-            reply = '1'
-        if reply == b'Off\r\n':
-            reply = '0'
+        # next 4 lines are due to a bug in QTCs firmware. Some commands return 'on/off' instead of '1/0'
+        if reply == b"On\r\n":
+            reply = "1"
+        if reply == b"Off\r\n":
+            reply = "0"
         if expected_result_type is not None:
             try:
                 reply = expected_result_type(reply)
@@ -239,17 +241,17 @@ class Channel:
 
 
 class Slice:
-    def __init__(self, port='/dev/vescent', debug=False):
-        self.debug = debug
-        self.port = port
+    def __init__(self, port="/dev/vescent", debug=False):
+    self.debug = debug
+    self.port = port
 
-        self.ser = None
-        self._connect()
+    self.ser = None
+    self._connect()
 
-        self.ch1 = Channel(1, self.ser)
-        self.ch2 = Channel(2, self.ser)
-        self.ch3 = Channel(3, self.ser)
-        self.ch4 = Channel(4, self.ser)
+    self.ch1 = Channel(1, self.ser)
+    self.ch2 = Channel(2, self.ser)
+    self.ch3 = Channel(3, self.ser)
+    self.ch4 = Channel(4, self.ser)
 
     def _connect(self):
         if not self.debug:
@@ -271,25 +273,34 @@ class Slice:
             except serial.SerialException:
                 pass
 
+
     def _send_command(self, command, expected_result_type):
         return send_command(self.ser, command, expected_result_type)
 
-    def _loop_over_channels(self, attribute_name: str, values):
-        for channel, val in enumerate(values):
-            if v is not None:
-                setattr(getattr(self, f"ch{channel+1}", attribute_name, v))
+
+    def _loop_over_channels(
+        self, attribute_name: str, values: Any | tuple[Any, Any, Any, Any]
+    ):
+        values_iter = values if isinstance(values, Iterable) else [values] * 4
+        assert len(values_iter) == 4
+        for channel, val in enumerate(values_iter, start=1):
+            if val is not None:
+                setattr(getattr(self, f"ch{channel}"), attribute_name, val)
+
 
     @property
     def Temp(self) -> (float, float, float, float):
         return self.ch1.Temp, self.ch2.Temp, self.ch3.Temp, self.ch4.Temp
 
+
     @property
     def TempSet(self) -> (float, float, float, float):
         return self.ch1.TempSet, self.ch2.TempSet, self.ch3.TempSet, self.ch4.TempSet
 
+
     @TempSet.setter
-    def TempSet(self, values:tuple[float, float, float, float]):
-        return self._loop_over_channels('TempSet', values)
+    def TempSet(self, values: float | tuple[float, float, float, float]):
+        self._loop_over_channels("TempSet", values)
 
     @property
     def TError(self) -> (float, float, float, float):
@@ -300,104 +311,94 @@ class Slice:
         return self.ch1.Bipolar, self.ch2.Bipolar, self.ch3.Bipolar, self.ch4.Bipolar
 
     @Bipolar.setter
-    def Bipolar(self, values: tuple[int, int, int, int]):
-        return self._loop_over_channels('Bipolar', values)
+    def Bipolar(self, values: int | tuple[int, int, int, int]):
+        self._loop_over_channels("Bipolar", values)
 
     @property
     def MaxPwr(self) -> (float, float, float, float):
         return self.ch1.MaxPwr, self.ch2.MaxPwr, self.ch3.MaxPwr, self.ch4.MaxPwr
 
     @MaxPwr.setter
-    def MaxPwr(self, values: tuple[float, float, float, float]):
-        return self._loop_over_channels('MaxPwr', values)
+    def MaxPwr(self, values: float | tuple[float, float, float, float]):
+        self._loop_over_channels("MaxPwr", values)
 
     @property
     def Power(self) -> (float, float, float, float):
         return self.ch1.Power, self.ch2.Power, self.ch3.Power, self.ch4.Power
 
-    @Power.setter
-    def Power(self, values: tuple[float, float, float, float]):
-        return self._loop_over_channels('Power', values)
-
     @property
     def CVolt(self) -> (float, float, float, float):
         return self.ch1.CVolt, self.ch2.CVolt, self.ch3.CVolt, self.ch4.CVolt
-
-    @CVolt.setter
-    def CVolt(self, values: tuple[float, float, float, float]):
-        return self._loop_over_channels('CVolt', values)
 
     @property
     def Beta(self) -> (float, float, float, float):
         return self.ch1.Beta, self.ch2.Beta, self.ch3.Beta, self.ch4.Beta
 
     @Beta.setter
-    def Beta(self, values: tuple[float, float, float, float]):
-        return self._loop_over_channels('Beta', values)
+    def Beta(self, values: float | tuple[float, float, float, float]):
+        self._loop_over_channels("Beta", values)
 
     @property
     def RefTemp(self) -> (float, float, float, float):
         return self.ch1.RefTemp, self.ch2.RefTemp, self.ch3.RefTemp, self.ch4.RefTemp
 
     @RefTemp.setter
-    def RefTemp(self, values: tuple[float, float, float, float]):
-        return self._loop_over_channels('RefTemp', values)
+    def RefTemp(self, values: float | tuple[float, float, float, float]):
+        self._loop_over_channels("RefTemp", values)
 
     @property
     def RefRes(self) -> (float, float, float, float):
         return self.ch1.RefRes, self.ch2.RefRes, self.ch3.RefRes, self.ch4.RefRes
 
     @RefRes.setter
-    def RefRes(self, values: tuple[float, float, float, float]):
-        return self._loop_over_channels('RefRes', values)
+    def RefRes(self, values: float | tuple[float, float, float, float]):
+        self._loop_over_channels("RefRes", values)
 
     @property
     def TCoefA(self) -> (float, float, float, float):
         return self.ch1.TCoefA, self.ch2.TCoefA, self.ch3.TCoefA, self.ch4.TCoefA
 
     @TCoefA.setter
-    def TCoefA(self, values: tuple[float, float, float, float]):
-        return self._loop_over_channels('TCoefA', values)
+    def TCoefA(self, values: float | tuple[float, float, float, float]):
+        self._loop_over_channels("TCoefA", values)
 
     @property
     def TCoefB(self) -> (float, float, float, float):
         return self.ch1.TCoefB, self.ch2.TCoefB, self.ch3.TCoefB, self.ch4.TCoefB
 
     @TCoefB.setter
-    def TCoefB(self, values: tuple[float, float, float, float]):
-        return self._loop_over_channels('TCoefB', values)
+    def TCoefB(self, values: float | tuple[float, float, float, float]):
+        self._loop_over_channels("TCoefB", values)
 
     @property
     def TCoefC(self) -> (float, float, float, float):
         return self.ch1.TCoefC, self.ch2.TCoefC, self.ch3.TCoefC, self.ch4.TCoefC
 
     @TCoefC.setter
-    def TCoefC(self, values: tuple[float, float, float, float]):
-        return self._loop_over_channels('TCoefC', values)
+    def TCoefC(self, values: float | tuple[float, float, float, float]):
+        self._loop_over_channels("TCoefC", values)
 
     @property
     def TempMin(self) -> (float, float, float, float):
         return self.ch1.TempMin, self.ch2.TempMin, self.ch3.TempMin, self.ch4.TempMin
 
     @TempMin.setter
-    def TempMin(self, values: tuple[float, float, float, float]):
-        return self._loop_over_channels('TempMin', values)
+    def TempMin(self, values: float | tuple[float, float, float, float]):
+        self._loop_over_channels("TempMin", values)
 
     @property
     def TempMax(self) -> (float, float, float, float):
         return self.ch1.TempMax, self.ch2.TempMax, self.ch3.TempMax, self.ch4.TempMax
 
     @TempMax.setter
-    def TempMax(self, values: tuple[float, float, float, float]):
-        return self._loop_over_channels('TempMax', values)
+    def TempMax(self, values: float | tuple[float, float, float, float]):
+        self._loop_over_channels("TempMax", values)
 
-    @property
-    def TEMPLUT(self) -> (float, float, float, float):
-        return self.ch1.TEMPLUT, self.ch2.TEMPLUT, self.ch3.TEMPLUT, self.ch4.TEMPLUT
-
-    @TEMPLUT.setter
-    def TEMPLUT(self, values: tuple[float, float, float, float]):
-        return self._loop_over_channels('TEMPLUT', values)
+    def TEMPLUT(self):
+        self.ch1.TEMPLUT()
+        self.ch2.TEMPLUT()
+        self.ch3.TEMPLUT()
+        self.ch4.TEMPLUT()
 
     @property
     def Control(self) -> (str, str, str, str):
@@ -405,71 +406,71 @@ class Slice:
 
     @Control.setter
     def Control(self, values: tuple[str, str, str, str]):
-        return self._loop_over_channels('Control', values)
+        self._loop_over_channels("Control", values)
 
     @property
     def PGain(self) -> (float, float, float, float):
         return self.ch1.PGain, self.ch2.PGain, self.ch3.PGain, self.ch4.PGain
 
     @PGain.setter
-    def PGain(self, values: tuple[float, float, float, float]):
-        return self._loop_over_channels('PGain', values)
+    def PGain(self, values: float | tuple[float, float, float, float]):
+        self._loop_over_channels("PGain", values)
 
     @property
     def Integ(self) -> (float, float, float, float):
         return self.ch1.Integ, self.ch2.Integ, self.ch3.Integ, self.ch4.Integ
 
     @Integ.setter
-    def Integ(self, values: tuple[float, float, float, float]):
-        return self._loop_over_channels('Integ', values)
+    def Integ(self, values: float | tuple[float, float, float, float]):
+        self._loop_over_channels("Integ", values)
 
     @property
     def Deriv(self) -> (float, float, float, float):
         return self.ch1.Deriv, self.ch2.Deriv, self.ch3.Deriv, self.ch4.Deriv
 
     @Deriv.setter
-    def Deriv(self, values: tuple[float, float, float, float]):
-        return self._loop_over_channels('Deriv', values)
+    def Deriv(self, values: float | tuple[float, float, float, float]):
+        self._loop_over_channels("Deriv", values)
 
     @property
     def Slew(self) -> (float, float, float, float):
         return self.ch1.Slew, self.ch2.Slew, self.ch3.Slew, self.ch4.Slew
 
     @Slew.setter
-    def Slew(self, values: tuple[float, float, float, float]):
-        return self._loop_over_channels('Slew', values)
+    def Slew(self, values: float | tuple[float, float, float, float]):
+        self._loop_over_channels("Slew", values)
 
     @property
-    def DerivEn(self) -> (bool, bool, bool, bool):
+    def DerivEn(self) -> (int, int, int, int):
         return self.ch1.DerivEn, self.ch2.DerivEn, self.ch3.DerivEn, self.ch4.DerivEn
 
     @DerivEn.setter
-    def DerivEn(self, values: tuple[bool, bool, bool, bool]):
-        return self._loop_over_channels('DerivEn', values)
+    def DerivEn(self, values: int | tuple[int, int, int, int]):
+        self._loop_over_channels("DerivEn", values)
 
     @property
-    def PGainEn(self) -> (bool, bool, bool, bool):
+    def PGainEn(self) -> (int, int, int, int):
         return self.ch1.PGainEn, self.ch2.PGainEn, self.ch3.PGainEn, self.ch4.PGainEn
 
     @PGainEn.setter
-    def PGainEn(self, values: tuple[bool, bool, bool, bool]):
-        return self._loop_over_channels('PGainEn', values)
+    def PGainEn(self, values: int | tuple[int, int, int, int]):
+        self._loop_over_channels("PGainEn", values)
 
     @property
-    def IntegEn(self) -> (bool, bool, bool, bool):
+    def IntegEn(self) -> (int, int, int, int):
         return self.ch1.IntegEn, self.ch2.IntegEn, self.ch3.IntegEn, self.ch4.IntegEn
 
     @IntegEn.setter
-    def IntegEn(self, values: tuple[bool, bool, bool, bool]):
-        return self._loop_over_channels('IntegEn', values)
+    def IntegEn(self, values: int | tuple[int, int, int, int]):
+        self._loop_over_channels("IntegEn", values)
 
     @property
-    def SlewEn(self) -> (bool, bool, bool, bool):
+    def SlewEn(self) -> (int, int, int, int):
         return self.ch1.SlewEn, self.ch2.SlewEn, self.ch3.SlewEn, self.ch4.SlewEn
 
     @SlewEn.setter
-    def SlewEn(self, values: tuple[bool, bool, bool, bool]):
-        return self._loop_over_channels('SlewEn', values)
+    def SlewEn(self, values: int | tuple[int, int, int, int]):
+        self._loop_over_channels("SlewEn", values)
 
     @property
     def IDN(self) -> str:
@@ -477,7 +478,8 @@ class Slice:
 
     @property
     def serial(self) -> int:
-        return int(self.IDN.split(",")[2])
+        idn = self.IDN
+        return int(idn.split(",")[2]) if idn is not None else None
 
     @property
     def version(self) -> float:
@@ -521,9 +523,12 @@ class Slice:
     def save_json(self, path: str | Path):
         qtc_settings = {}
         # setting keys for properties that can be set. The same for all channels.
-        setting_keys = [attr for attr, value in vars(Channel).items()
-                        if isinstance(value, property) and value.fset is not None]
-        for channel in ['ch1', 'ch2', 'ch3', 'ch4']:
+        setting_keys = [
+            attr
+            for attr, value in vars(Channel).items()
+            if isinstance(value, property) and value.fset is not None
+        ]
+        for channel in ["ch1", "ch2", "ch3", "ch4"]:
             # read in current setting values for each channel
             setting_values = [getattr(getattr(self, channel), s) for s in setting_keys]
             settings_dict = dict(zip(setting_keys, setting_values))
@@ -541,49 +546,55 @@ class Slice:
         if autosave:
             self.save()
 
-    def print_status(self, temperatures=True, pid=False, channels=[1, 2, 3, 4]):
 
+    def print_status(
+        self,
+        temperatures: bool = True,
+        pid: bool = False,
+        channels: Iterable = (1, 2, 3, 4),
+    ):
         print(f'{"":=<62}')
-        print(f'         ', end='')
+        print(f"         ", end="")
         for c in channels:
-            print(f'| Channel {c}'.ljust(13), end='')
-        print('|')
+            print(f"| Channel {c}".ljust(13), end="")
+        print("|")
 
         def print_row(attribute):
-            print(f"{attribute}|".rjust(10), end='')
-            for c in channels:
-                channel = getattr(self, f"ch{c}")
+            print(f"{attribute}|".rjust(10), end="")
+            for ch_nr in channels:
+                channel = getattr(self, f"ch{ch_nr}")
                 val = getattr(channel, attribute)
-                print(f"{val:.4f}|".rjust(13), end='')
+                if val is not None:
+                    print(f"{val:.4f}|".rjust(13), end="")
+                else:
+                    print(f"---.----|".rjust(13), end="")
             print("")
 
-        print(f'{"":=<{13*len(channels)+10}}')
+        print(f'{"":=<{13 * len(channels) + 10}}')
         if temperatures:
-            print_row('Temp')
+            print_row("Temp")
             print_row("TempSet")
             print_row("TError")
         if pid:
-            print(f'{"":=<{13*len(channels)+10}}')
+            print(f'{"":=<{13 * len(channels) + 10}}')
             print_row("PGain")
             print_row("PGainEn")
-            print(f'{"":-<{13*len(channels)+10}}')
+            print(f'{"":-<{13 * len(channels) + 10}}')
             print_row("Integ")
             print_row("IntegEn")
-            print(f'{"":-<{13*len(channels)+10}}')
+            print(f'{"":-<{13 * len(channels) + 10}}')
             print_row("Deriv")
             print_row("DerivEn")
-            print(f'{"":-<{13*len(channels)+10}}')
+            print(f'{"":-<{13 * len(channels) + 10}}')
             print_row("Slew")
             print_row("SlewEn")
-            print(f'{"":-<{13*len(channels)+10}}')
+            print(f'{"":-<{13 * len(channels) + 10}}')
             print_row("Control")
-        print(f'{"":=<{13*len(channels)+10}}')
+        print(f'{"":=<{13 * len(channels) + 10}}')
 
 
 if __name__ == "__main__":
     logger.setLevel(logging.DEBUG)
-    logging.basicConfig(format='%(asctime)s %(message)s', level=logging.DEBUG)
-    qtc = Slice('/dev/ttyACM0')
-    for i in [1, 2, 3, 4]:
-        ch = getattr(qtc, f"ch{i}")
-        print(f"Channel {i} Temperature: {ch.Temp:.4f}")
+    logging.basicConfig(format="%(asctime)s %(message)s", level=logging.DEBUG)
+    qtc = Slice("/dev/ttyACM0")
+    qtc.print_status()

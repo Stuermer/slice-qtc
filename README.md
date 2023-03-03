@@ -26,6 +26,23 @@ print(qtc.ch1.Temp)
 qtc.ch2.SetTemp = 19.040
 ```
 
+You can also read/set the values for all 4 channels simultaneously:
+
+```python
+import slice
+
+qtc = slice.Slice()
+
+# prints a tuple like (20.34, 20.50, 30.1, 10.0)
+print(qtc.Temp)
+
+# Sets the setpoint temperature of all 4 channels. Channel 3 will be ignored since 'None' was passed
+qtc.SetTemp = (20.5, 21., None, 30.)
+
+# If all channels should receive the identical settings, you can also do:
+qtc.PGain = 5.5
+```
+
 For convenience, all channel settings can be exported to and imported from a JSON file:
 
 ```python

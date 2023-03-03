@@ -6,10 +6,18 @@ from slice.slice import Slice, Channel
 
 def test_qtc_attributes():
     qtc = Slice(debug=True)
+    # get all writable Slice attributes
+    writeable = [attr for attr, value in vars(Slice).items() if
+                 isinstance(value, property) and value.fset is not None]
 
+    # test readable attributes
     for attr in dir(qtc):
         if isinstance(getattr(type(qtc), attr, None), property):
-            assert getattr(qtc, attr) is None
+            assert getattr(qtc, attr) is None or (None, None, None, None)
+
+        # test writable attributes
+        if attr in writeable:
+            assert setattr(qtc, attr, 1.0) is None
 
 
 def test_channel_attributes():
@@ -27,9 +35,18 @@ def test_channel_attributes():
             assert setattr(qtc.ch1, attr, 1.0) is None
 
 
-def test_settings_to_file():
-    qtc = Slice(debug=True)
-    qtc.save_json('test.json')
-    assert os.path.isfile('test.json')
-    qtc.load_json('test.json')
-    pathlib.Path.cwd().joinpath('test.json').unlink(missing_ok=True)
+            def test_settings_to_file():
+                qtc = Slice(debug=True)
+                qtc.save_json("test.json")
+                assert os.path.isfile("test.json")
+                qtc.load_json("test.json")
+                pathlib.Path.cwd().joinpath("test.json").unlink(missing_ok=True)
+
+
+            def test_status_print():
+                qtc = Slice(debug=True)
+                qtc.print_status(temperatures=False, pid=False)
+                qtc.print_status(temperatures=True, pid=False)
+                qtc.print_status(temperatures=True, pid=True)
+                qtc.print_status(temperatures=False, pid=True)
+                qtc.print_status(temperatures=True, pid=True, channels=[1, 3, 4])
