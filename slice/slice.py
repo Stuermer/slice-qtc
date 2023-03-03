@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import logging
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any, Iterable, Sequence
 
 import serial
 from serial import Serial
@@ -273,13 +273,11 @@ class Slice:
             except serial.SerialException:
                 pass
 
-
     def _send_command(self, command, expected_result_type):
         return send_command(self.ser, command, expected_result_type)
 
-
     def _loop_over_channels(
-        self, attribute_name: str, values: Any | tuple[Any, Any, Any, Any]
+            self, attribute_name: str, values: Any | Sequence[Any, Any, Any, Any]
     ):
         values_iter = values if isinstance(values, Iterable) else [values] * 4
         assert len(values_iter) == 4
@@ -287,19 +285,16 @@ class Slice:
             if val is not None:
                 setattr(getattr(self, f"ch{channel}"), attribute_name, val)
 
-
     @property
     def Temp(self) -> (float, float, float, float):
         return self.ch1.Temp, self.ch2.Temp, self.ch3.Temp, self.ch4.Temp
-
 
     @property
     def TempSet(self) -> (float, float, float, float):
         return self.ch1.TempSet, self.ch2.TempSet, self.ch3.TempSet, self.ch4.TempSet
 
-
     @TempSet.setter
-    def TempSet(self, values: float | tuple[float, float, float, float]):
+    def TempSet(self, values: float | Sequence[float, float, float, float]):
         self._loop_over_channels("TempSet", values)
 
     @property
@@ -311,7 +306,7 @@ class Slice:
         return self.ch1.Bipolar, self.ch2.Bipolar, self.ch3.Bipolar, self.ch4.Bipolar
 
     @Bipolar.setter
-    def Bipolar(self, values: int | tuple[int, int, int, int]):
+    def Bipolar(self, values: int | Sequence[int, int, int, int]):
         self._loop_over_channels("Bipolar", values)
 
     @property
@@ -319,7 +314,7 @@ class Slice:
         return self.ch1.MaxPwr, self.ch2.MaxPwr, self.ch3.MaxPwr, self.ch4.MaxPwr
 
     @MaxPwr.setter
-    def MaxPwr(self, values: float | tuple[float, float, float, float]):
+    def MaxPwr(self, values: float | Sequence[float, float, float, float]):
         self._loop_over_channels("MaxPwr", values)
 
     @property
@@ -335,7 +330,7 @@ class Slice:
         return self.ch1.Beta, self.ch2.Beta, self.ch3.Beta, self.ch4.Beta
 
     @Beta.setter
-    def Beta(self, values: float | tuple[float, float, float, float]):
+    def Beta(self, values: float | Sequence[float, float, float, float]):
         self._loop_over_channels("Beta", values)
 
     @property
@@ -343,7 +338,7 @@ class Slice:
         return self.ch1.RefTemp, self.ch2.RefTemp, self.ch3.RefTemp, self.ch4.RefTemp
 
     @RefTemp.setter
-    def RefTemp(self, values: float | tuple[float, float, float, float]):
+    def RefTemp(self, values: float | Sequence[float, float, float, float]):
         self._loop_over_channels("RefTemp", values)
 
     @property
@@ -351,7 +346,7 @@ class Slice:
         return self.ch1.RefRes, self.ch2.RefRes, self.ch3.RefRes, self.ch4.RefRes
 
     @RefRes.setter
-    def RefRes(self, values: float | tuple[float, float, float, float]):
+    def RefRes(self, values: float | Sequence[float, float, float, float]):
         self._loop_over_channels("RefRes", values)
 
     @property
@@ -359,7 +354,7 @@ class Slice:
         return self.ch1.TCoefA, self.ch2.TCoefA, self.ch3.TCoefA, self.ch4.TCoefA
 
     @TCoefA.setter
-    def TCoefA(self, values: float | tuple[float, float, float, float]):
+    def TCoefA(self, values: float | Sequence[float, float, float, float]):
         self._loop_over_channels("TCoefA", values)
 
     @property
@@ -367,7 +362,7 @@ class Slice:
         return self.ch1.TCoefB, self.ch2.TCoefB, self.ch3.TCoefB, self.ch4.TCoefB
 
     @TCoefB.setter
-    def TCoefB(self, values: float | tuple[float, float, float, float]):
+    def TCoefB(self, values: float | Sequence[float, float, float, float]):
         self._loop_over_channels("TCoefB", values)
 
     @property
@@ -375,7 +370,7 @@ class Slice:
         return self.ch1.TCoefC, self.ch2.TCoefC, self.ch3.TCoefC, self.ch4.TCoefC
 
     @TCoefC.setter
-    def TCoefC(self, values: float | tuple[float, float, float, float]):
+    def TCoefC(self, values: float | Sequence[float, float, float, float]):
         self._loop_over_channels("TCoefC", values)
 
     @property
@@ -383,7 +378,7 @@ class Slice:
         return self.ch1.TempMin, self.ch2.TempMin, self.ch3.TempMin, self.ch4.TempMin
 
     @TempMin.setter
-    def TempMin(self, values: float | tuple[float, float, float, float]):
+    def TempMin(self, values: float | Sequence[float, float, float, float]):
         self._loop_over_channels("TempMin", values)
 
     @property
@@ -391,7 +386,7 @@ class Slice:
         return self.ch1.TempMax, self.ch2.TempMax, self.ch3.TempMax, self.ch4.TempMax
 
     @TempMax.setter
-    def TempMax(self, values: float | tuple[float, float, float, float]):
+    def TempMax(self, values: float | Sequence[float, float, float, float]):
         self._loop_over_channels("TempMax", values)
 
     def TEMPLUT(self):
@@ -405,7 +400,7 @@ class Slice:
         return self.ch1.Control, self.ch2.Control, self.ch3.Control, self.ch4.Control
 
     @Control.setter
-    def Control(self, values: tuple[str, str, str, str]):
+    def Control(self, values: Sequence[str, str, str, str]):
         self._loop_over_channels("Control", values)
 
     @property
@@ -413,7 +408,7 @@ class Slice:
         return self.ch1.PGain, self.ch2.PGain, self.ch3.PGain, self.ch4.PGain
 
     @PGain.setter
-    def PGain(self, values: float | tuple[float, float, float, float]):
+    def PGain(self, values: float | Sequence[float, float, float, float]):
         self._loop_over_channels("PGain", values)
 
     @property
@@ -421,7 +416,7 @@ class Slice:
         return self.ch1.Integ, self.ch2.Integ, self.ch3.Integ, self.ch4.Integ
 
     @Integ.setter
-    def Integ(self, values: float | tuple[float, float, float, float]):
+    def Integ(self, values: float | Sequence[float, float, float, float]):
         self._loop_over_channels("Integ", values)
 
     @property
@@ -429,7 +424,7 @@ class Slice:
         return self.ch1.Deriv, self.ch2.Deriv, self.ch3.Deriv, self.ch4.Deriv
 
     @Deriv.setter
-    def Deriv(self, values: float | tuple[float, float, float, float]):
+    def Deriv(self, values: float | Sequence[float, float, float, float]):
         self._loop_over_channels("Deriv", values)
 
     @property
@@ -437,7 +432,7 @@ class Slice:
         return self.ch1.Slew, self.ch2.Slew, self.ch3.Slew, self.ch4.Slew
 
     @Slew.setter
-    def Slew(self, values: float | tuple[float, float, float, float]):
+    def Slew(self, values: float | Sequence[float, float, float, float]):
         self._loop_over_channels("Slew", values)
 
     @property
@@ -445,7 +440,7 @@ class Slice:
         return self.ch1.DerivEn, self.ch2.DerivEn, self.ch3.DerivEn, self.ch4.DerivEn
 
     @DerivEn.setter
-    def DerivEn(self, values: int | tuple[int, int, int, int]):
+    def DerivEn(self, values: int | Sequence[int, int, int, int]):
         self._loop_over_channels("DerivEn", values)
 
     @property
@@ -453,7 +448,7 @@ class Slice:
         return self.ch1.PGainEn, self.ch2.PGainEn, self.ch3.PGainEn, self.ch4.PGainEn
 
     @PGainEn.setter
-    def PGainEn(self, values: int | tuple[int, int, int, int]):
+    def PGainEn(self, values: int | Sequence[int, int, int, int]):
         self._loop_over_channels("PGainEn", values)
 
     @property
@@ -461,7 +456,7 @@ class Slice:
         return self.ch1.IntegEn, self.ch2.IntegEn, self.ch3.IntegEn, self.ch4.IntegEn
 
     @IntegEn.setter
-    def IntegEn(self, values: int | tuple[int, int, int, int]):
+    def IntegEn(self, values: int | Sequence[int, int, int, int]):
         self._loop_over_channels("IntegEn", values)
 
     @property
@@ -469,7 +464,7 @@ class Slice:
         return self.ch1.SlewEn, self.ch2.SlewEn, self.ch3.SlewEn, self.ch4.SlewEn
 
     @SlewEn.setter
-    def SlewEn(self, values: int | tuple[int, int, int, int]):
+    def SlewEn(self, values: int | Sequence[int, int, int, int]):
         self._loop_over_channels("SlewEn", values)
 
     @property
@@ -546,12 +541,11 @@ class Slice:
         if autosave:
             self.save()
 
-
     def print_status(
-        self,
-        temperatures: bool = True,
-        pid: bool = False,
-        channels: Iterable = (1, 2, 3, 4),
+            self,
+            temperatures: bool = True,
+            pid: bool = False,
+            channels: Sequence = (1, 2, 3, 4),
     ):
         print(f'{"":=<62}')
         print(f"         ", end="")

@@ -172,7 +172,7 @@ qtc.load_json('channel_settings.json')
 
 ## Installation
 
-The package can be installed via pip (NOT UPLOADED YET):
+The package can be installed via pip:
 
 ```bash
 pip install slice-qtc 
