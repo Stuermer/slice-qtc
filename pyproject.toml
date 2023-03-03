@@ -28,6 +28,7 @@ source = ["slice"]
 
 [tool.coverage.run]
 source = ["slice"]
+relative_files = true
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
