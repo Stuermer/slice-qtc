@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import argparse
 import json
 import logging
+import sys
 from pathlib import Path
 from typing import Any, Iterable, Sequence
 
@@ -284,7 +286,7 @@ class Slice:
         return send_command(self.ser, command, expected_result_type)
 
     def _loop_over_channels(
-            self, attribute_name: str, values: Any | Sequence[Any, Any, Any, Any]
+        self, attribute_name: str, values: Any | Sequence[Any, Any, Any, Any]
     ):
         values_iter = values if isinstance(values, Iterable) else [values] * 4
         assert len(values_iter) == 4
@@ -549,10 +551,10 @@ class Slice:
             self.save()
 
     def print_status(
-            self,
-            temperatures: bool = True,
-            pid: bool = False,
-            channels: Sequence = (1, 2, 3, 4),
+        self,
+        temperatures: bool = True,
+        pid: bool = False,
+        channels: Sequence = (1, 2, 3, 4),
     ):
         print(f'{"":=<62}')
         print(f"         ", end="")
@@ -594,8 +596,52 @@ class Slice:
         print(f'{"":=<{13 * len(channels) + 10}}')
 
 
+def generate_parser():
+    parser = argparse.ArgumentParser(
+        prog="Slice-QTC",
+        description="Interactive communication with Vescent Slice QTC Temperature controller",
+    )
+
+    parser.add_argument("path", help="device path, e.g. /dev/ttyACM0 ")
+    parser.add_argument(
+        "-d",
+        "--debug",
+        action="store_true",
+        required=False,
+        help="Debug mode. When set, no commands are sent to serial port",
+    )
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="store_true",
+        required=False,
+        help="Verbose mode. When set, all raw responses will be print to the console ",
+    )
+    return parser
+
+
+def interactive_mode(args=None):
+    if not args:
+        args = sys.argv[1:]
+    parser = generate_parser()
+    args = parser.parse_args(args)
+
+    from IPython import embed
+
+    if args.verbose:
+        logger.setLevel(logging.DEBUG)
+        logging.basicConfig(format="%(asctime)s %(message)s", level=logging.DEBUG)
+
+    qtc = Slice(args.path, args.debug)
+
+    print(
+        f"{'':*<70}\nWelcome to the interactive mode of slice-qtc.\n"
+        f"Use the qtc object to interact with the Slice. e.g. write \n\nqtc.ch1.Temp \n\nto print the "
+        f"current temperature of channel 1 \n"
+        f"{'':*<70}\n"
+    )
+    embed()
+
+
 if __name__ == "__main__":
-    logger.setLevel(logging.DEBUG)
-    logging.basicConfig(format="%(asctime)s %(message)s", level=logging.DEBUG)
-    qtc = Slice("/dev/ttyACM0")
-    qtc.print_status()
+    interactive_mode()

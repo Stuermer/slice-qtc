@@ -1,7 +1,7 @@
 import os.path
 import pathlib
 
-from slice.slice import Slice, Channel
+from slice.slice import Slice, Channel, generate_parser
 
 
 def test_qtc_attributes():
@@ -85,3 +85,7 @@ def test_status_print(capfd):
     qtc.print_status(temperatures=True, pid=True, channels=[1, 3, 4])
     out, err = capfd.readouterr()
     assert len(out.split("\n")) == 22
+
+
+def test_parser():
+    generate_parser()
