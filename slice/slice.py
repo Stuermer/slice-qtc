@@ -274,6 +274,211 @@ class Slice:
     def _send_command(self, command, expected_result_type):
         return send_command(self.ser, command, expected_result_type)
 
+    def _loop_over_channels(self, attribute_name: str, values):
+        for channel, val in enumerate(values):
+            if v is not None:
+                setattr(getattr(self, f"ch{channel+1}", attribute_name, v))
+
+    @property
+    def Temp(self) -> (float, float, float, float):
+        return self.ch1.Temp, self.ch2.Temp, self.ch3.Temp, self.ch4.Temp
+
+    @property
+    def TempSet(self) -> (float, float, float, float):
+        return self.ch1.TempSet, self.ch2.TempSet, self.ch3.TempSet, self.ch4.TempSet
+
+    @TempSet.setter
+    def TempSet(self, values:tuple[float, float, float, float]):
+        return self._loop_over_channels('TempSet', values)
+
+    @property
+    def TError(self) -> (float, float, float, float):
+        return self.ch1.TError, self.ch2.TError, self.ch3.TError, self.ch4.TError
+
+    @property
+    def Bipolar(self) -> (int, int, int, int):
+        return self.ch1.Bipolar, self.ch2.Bipolar, self.ch3.Bipolar, self.ch4.Bipolar
+
+    @Bipolar.setter
+    def Bipolar(self, values: tuple[int, int, int, int]):
+        return self._loop_over_channels('Bipolar', values)
+
+    @property
+    def MaxPwr(self) -> (float, float, float, float):
+        return self.ch1.MaxPwr, self.ch2.MaxPwr, self.ch3.MaxPwr, self.ch4.MaxPwr
+
+    @MaxPwr.setter
+    def MaxPwr(self, values: tuple[float, float, float, float]):
+        return self._loop_over_channels('MaxPwr', values)
+
+    @property
+    def Power(self) -> (float, float, float, float):
+        return self.ch1.Power, self.ch2.Power, self.ch3.Power, self.ch4.Power
+
+    @Power.setter
+    def Power(self, values: tuple[float, float, float, float]):
+        return self._loop_over_channels('Power', values)
+
+    @property
+    def CVolt(self) -> (float, float, float, float):
+        return self.ch1.CVolt, self.ch2.CVolt, self.ch3.CVolt, self.ch4.CVolt
+
+    @CVolt.setter
+    def CVolt(self, values: tuple[float, float, float, float]):
+        return self._loop_over_channels('CVolt', values)
+
+    @property
+    def Beta(self) -> (float, float, float, float):
+        return self.ch1.Beta, self.ch2.Beta, self.ch3.Beta, self.ch4.Beta
+
+    @Beta.setter
+    def Beta(self, values: tuple[float, float, float, float]):
+        return self._loop_over_channels('Beta', values)
+
+    @property
+    def RefTemp(self) -> (float, float, float, float):
+        return self.ch1.RefTemp, self.ch2.RefTemp, self.ch3.RefTemp, self.ch4.RefTemp
+
+    @RefTemp.setter
+    def RefTemp(self, values: tuple[float, float, float, float]):
+        return self._loop_over_channels('RefTemp', values)
+
+    @property
+    def RefRes(self) -> (float, float, float, float):
+        return self.ch1.RefRes, self.ch2.RefRes, self.ch3.RefRes, self.ch4.RefRes
+
+    @RefRes.setter
+    def RefRes(self, values: tuple[float, float, float, float]):
+        return self._loop_over_channels('RefRes', values)
+
+    @property
+    def TCoefA(self) -> (float, float, float, float):
+        return self.ch1.TCoefA, self.ch2.TCoefA, self.ch3.TCoefA, self.ch4.TCoefA
+
+    @TCoefA.setter
+    def TCoefA(self, values: tuple[float, float, float, float]):
+        return self._loop_over_channels('TCoefA', values)
+
+    @property
+    def TCoefB(self) -> (float, float, float, float):
+        return self.ch1.TCoefB, self.ch2.TCoefB, self.ch3.TCoefB, self.ch4.TCoefB
+
+    @TCoefB.setter
+    def TCoefB(self, values: tuple[float, float, float, float]):
+        return self._loop_over_channels('TCoefB', values)
+
+    @property
+    def TCoefC(self) -> (float, float, float, float):
+        return self.ch1.TCoefC, self.ch2.TCoefC, self.ch3.TCoefC, self.ch4.TCoefC
+
+    @TCoefC.setter
+    def TCoefC(self, values: tuple[float, float, float, float]):
+        return self._loop_over_channels('TCoefC', values)
+
+    @property
+    def TempMin(self) -> (float, float, float, float):
+        return self.ch1.TempMin, self.ch2.TempMin, self.ch3.TempMin, self.ch4.TempMin
+
+    @TempMin.setter
+    def TempMin(self, values: tuple[float, float, float, float]):
+        return self._loop_over_channels('TempMin', values)
+
+    @property
+    def TempMax(self) -> (float, float, float, float):
+        return self.ch1.TempMax, self.ch2.TempMax, self.ch3.TempMax, self.ch4.TempMax
+
+    @TempMax.setter
+    def TempMax(self, values: tuple[float, float, float, float]):
+        return self._loop_over_channels('TempMax', values)
+
+    @property
+    def TEMPLUT(self) -> (float, float, float, float):
+        return self.ch1.TEMPLUT, self.ch2.TEMPLUT, self.ch3.TEMPLUT, self.ch4.TEMPLUT
+
+    @TEMPLUT.setter
+    def TEMPLUT(self, values: tuple[float, float, float, float]):
+        return self._loop_over_channels('TEMPLUT', values)
+
+    @property
+    def Control(self) -> (str, str, str, str):
+        return self.ch1.Control, self.ch2.Control, self.ch3.Control, self.ch4.Control
+
+    @Control.setter
+    def Control(self, values: tuple[str, str, str, str]):
+        return self._loop_over_channels('Control', values)
+
+    @property
+    def PGain(self) -> (float, float, float, float):
+        return self.ch1.PGain, self.ch2.PGain, self.ch3.PGain, self.ch4.PGain
+
+    @PGain.setter
+    def PGain(self, values: tuple[float, float, float, float]):
+        return self._loop_over_channels('PGain', values)
+
+    @property
+    def Integ(self) -> (float, float, float, float):
+        return self.ch1.Integ, self.ch2.Integ, self.ch3.Integ, self.ch4.Integ
+
+    @Integ.setter
+    def Integ(self, values: tuple[float, float, float, float]):
+        return self._loop_over_channels('Integ', values)
+
+    @property
+    def Deriv(self) -> (float, float, float, float):
+        return self.ch1.Deriv, self.ch2.Deriv, self.ch3.Deriv, self.ch4.Deriv
+
+    @Deriv.setter
+    def Deriv(self, values: tuple[float, float, float, float]):
+        return self._loop_over_channels('Deriv', values)
+
+    @property
+    def Slew(self) -> (float, float, float, float):
+        return self.ch1.Slew, self.ch2.Slew, self.ch3.Slew, self.ch4.Slew
+
+    @Slew.setter
+    def Slew(self, values: tuple[float, float, float, float]):
+        return self._loop_over_channels('Slew', values)
+
+    @property
+    def DerivEn(self) -> (bool, bool, bool, bool):
+        return self.ch1.DerivEn, self.ch2.DerivEn, self.ch3.DerivEn, self.ch4.DerivEn
+
+    @DerivEn.setter
+    def DerivEn(self, values: tuple[bool, bool, bool, bool]):
+        return self._loop_over_channels('DerivEn', values)
+
+    @property
+    def PGainEn(self) -> (bool, bool, bool, bool):
+        return self.ch1.PGainEn, self.ch2.PGainEn, self.ch3.PGainEn, self.ch4.PGainEn
+
+    @PGainEn.setter
+    def PGainEn(self, values: tuple[bool, bool, bool, bool]):
+        return self._loop_over_channels('PGainEn', values)
+
+    @property
+    def IntegEn(self) -> (bool, bool, bool, bool):
+        return self.ch1.IntegEn, self.ch2.IntegEn, self.ch3.IntegEn, self.ch4.IntegEn
+
+    @IntegEn.setter
+    def IntegEn(self, values: tuple[bool, bool, bool, bool]):
+        return self._loop_over_channels('IntegEn', values)
+
+    @property
+    def SlewEn(self) -> (bool, bool, bool, bool):
+        return self.ch1.SlewEn, self.ch2.SlewEn, self.ch3.SlewEn, self.ch4.SlewEn
+
+    @SlewEn.setter
+    def SlewEn(self, values: tuple[bool, bool, bool, bool]):
+        return self._loop_over_channels('SlewEn', values)
+
+    @property
+    def IDN(self) -> str:
+        return self._send_command("*IDN?", str)
+
+    @property
+    def serial(self) -> int:
+        return int(self.IDN.split(",")[2])
+
     @property
     def version(self) -> float:
         return self._send_command("#VERSION", float)
@@ -335,6 +540,44 @@ class Slice:
                     setattr(getattr(self, channel), setting_key, setting_value)
         if autosave:
             self.save()
+
+    def print_status(self, temperatures=True, pid=False, channels=[1, 2, 3, 4]):
+
+        print(f'{"":=<62}')
+        print(f'         ', end='')
+        for c in channels:
+            print(f'| Channel {c}'.ljust(13), end='')
+        print('|')
+
+        def print_row(attribute):
+            print(f"{attribute}|".rjust(10), end='')
+            for c in channels:
+                channel = getattr(self, f"ch{c}")
+                val = getattr(channel, attribute)
+                print(f"{val:.4f}|".rjust(13), end='')
+            print("")
+
+        print(f'{"":=<{13*len(channels)+10}}')
+        if temperatures:
+            print_row('Temp')
+            print_row("TempSet")
+            print_row("TError")
+        if pid:
+            print(f'{"":=<{13*len(channels)+10}}')
+            print_row("PGain")
+            print_row("PGainEn")
+            print(f'{"":-<{13*len(channels)+10}}')
+            print_row("Integ")
+            print_row("IntegEn")
+            print(f'{"":-<{13*len(channels)+10}}')
+            print_row("Deriv")
+            print_row("DerivEn")
+            print(f'{"":-<{13*len(channels)+10}}')
+            print_row("Slew")
+            print_row("SlewEn")
+            print(f'{"":-<{13*len(channels)+10}}')
+            print_row("Control")
+        print(f'{"":=<{13*len(channels)+10}}')
 
 
 if __name__ == "__main__":
