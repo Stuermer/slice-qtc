@@ -1,4 +1,5 @@
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/STuermer/slice-qtc/test.yaml?style=flat-square)
+![Coveralls](https://img.shields.io/coverallsCoverage/github/Stuermer/slice-qtc?style=flat-square)
 ![PyPI](https://img.shields.io/pypi/v/slice-qtc?style=flat-square)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/slice-qtc?style=flat-square)
 ![GitHub issues](https://img.shields.io/github/issues-raw/Stuermer/slice-qtc?style=flat-square)
