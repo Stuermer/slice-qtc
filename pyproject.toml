@@ -1,8 +1,11 @@
 [tool.poetry]
 name = "slice-qtc"
-version = "0.1.0"
+version = "0.1.1"
 description = "A package to communicate with a VESCENT Slice-QTC temperature controller."
 authors = ["Julian Stuermer <stuermer@lsw.uni-heidelberg.de>"]
+readme = "README.md"
+homepage = "https://github.com/Stuermer/slice-qtc"
+repository = "https://github.com/Stuermer/slice-qtc"
 license = "MIT"
 packages = [
     { include = "slice" }
@@ -21,6 +24,9 @@ pytest = "^7.1.2"
 coverage = "^6.4.4"
 
 [tool.coverage.paths]
+source = ["slice"]
+
+[tool.coverage.run]
 source = ["slice"]
 
 [build-system]
