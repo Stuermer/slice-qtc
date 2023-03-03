@@ -112,7 +112,7 @@ class Channel:
 
     @property
     def CVolt(self):
-        return self._send_command("CVolt")
+        return self._send_command("CVolt?")
 
     @property
     def Beta(self) -> float:
@@ -313,7 +313,7 @@ class Slice:
     def InputB(self, value: str):
         self._send_command(f"InputB {value}", str)
 
-    def save_settings_to_file(self, path: str | Path):
+    def save_json(self, path: str | Path):
         qtc_settings = {}
         # setting keys for properties that can be set. The same for all channels.
         setting_keys = [attr for attr, value in vars(Channel).items()
@@ -327,7 +327,7 @@ class Slice:
         with open(path, "w") as fp:
             json.dump(qtc_settings, fp, indent=4, sort_keys=True)
 
-    def load_settings_from_file(self, path: str | Path, autosave: bool = True):
+    def load_json(self, path: str | Path, autosave: bool = True):
         with open(path, "r") as json_data:
             qtc_settings = json.load(json_data)
             for channel in qtc_settings:
@@ -342,5 +342,5 @@ if __name__ == "__main__":
     logging.basicConfig(format='%(asctime)s %(message)s', level=logging.DEBUG)
     qtc = Slice('/dev/ttyACM0')
     for i in [1, 2, 3, 4]:
-        channel = getattr(qtc, f"ch{i}")
-        print(f"Channel {i} Temperature: {channel.Temp:.4f}")
+        ch = getattr(qtc, f"ch{i}")
+        print(f"Channel {i} Temperature: {ch.Temp:.4f}")

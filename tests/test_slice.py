@@ -1,3 +1,6 @@
+import os.path
+import pathlib
+
 from slice.slice import Slice, Channel
 
 
@@ -22,3 +25,11 @@ def test_channel_attributes():
             assert val is None
         if attr in writeable:
             assert setattr(qtc.ch1, attr, 1.0) is None
+
+
+def test_settings_to_file():
+    qtc = Slice(debug=True)
+    qtc.save_json('test.json')
+    assert os.path.isfile('test.json')
+    qtc.load_json('test.json')
+    pathlib.Path.cwd().joinpath('test.json').unlink(missing_ok=True)
