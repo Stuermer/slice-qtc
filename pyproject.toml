@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "slice-qtc"
-version = "0.1.1"
+version = "0.1.2"
 description = "A package to communicate with a VESCENT Slice-QTC temperature controller."
 authors = ["Julian Stuermer <stuermer@lsw.uni-heidelberg.de>"]
 readme = "README.md"
