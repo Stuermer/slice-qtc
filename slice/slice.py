@@ -264,7 +264,7 @@ class Slice:
 
     def _connect(self):
         if not self.debug:
-            self.ser = serial.Serial(self.port)
+            self.ser = serial.Serial(self.port, timeout = 1)
         else:
             logger.info("DEBUG MODE  -  no commands send to device")
 
